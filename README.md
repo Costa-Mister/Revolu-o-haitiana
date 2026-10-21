@@ -1,0 +1,1 @@
+# Analise-via-Google-Earth-e-Pr-ticas-de-Depolui-o
