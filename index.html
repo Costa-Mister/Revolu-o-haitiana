@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Revolução Haitiana e Quilombos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #1c1915;
+            --card-bg: #2b2620;
+            --gold: #d4a359;
+            --gold-hover: #e5b869;
+            --red-haiti: #9e2a2b;
+            --green-quilombo: #386641;
+            --text-light: #f4efe6;
+            --text-muted: #bfb6a8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at top right, #3a2e22 0%, #1c1915 70%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            max-width: 700px;
+            width: 100%;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--red-haiti), var(--gold), var(--green-quilombo));
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(212, 163, 89, 0.3);
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #1a1714;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--gold);
+            width: 10%;
+            transition: width 0.3s ease;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #363029;
+            border: 1px solid rgba(212, 163, 89, 0.4);
+            color: var(--text-light);
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #463e35;
+            border-color: var(--gold);
+            transform: translateX(4px);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+        }
+
+        .option-btn.correct {
+            background-color: var(--green-quilombo);
+            border-color: #52b788;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            background-color: var(--red-haiti);
+            border-color: #e63946;
+            color: #fff;
+        }
+
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, 0.25);
+            border-left: 4px solid var(--gold);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background-color: var(--gold);
+            color: #1c1915;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.2s;
+            display: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--gold-hover);
+        }
+
+        .result-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            background-color: rgba(212, 163, 89, 0.1);
+        }
+
+        .score-number {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .result-message {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 500px) {
+            .quiz-container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <header>
+        <h1>Revolução Haitiana & Quilombos</h1>
+        <p class="subtitle">Teste seus conhecimentos sobre resistência e liberdade nas Américas</p>
+    </header>
+
+    <div id="quiz-screen">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="question-header">
+            <span id="question-counter">Questão 1 de 10</span>
+            <span id="score-tracker">Pontos: 0</span>
+        </div>
+
+        <div class="question-text" id="question-text">Carregando...</div>
+
+        <div class="options-list" id="options-list"></div>
+
+        <div class="feedback-box" id="feedback-box"></div>
+
+        <div class="controls">
+            <button class="btn-primary" id="next-btn" onclick="nextQuestion()">Próxima Questão ➔</button>
+        </div>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+        <h2>Quiz Concluído!</h2>
+        <div class="score-circle">
+            <span class="score-number" id="final-score">0/10</span>
+            <span style="font-size: 0.8rem;">Acertos</span>
+        </div>
+        <p class="result-message" id="result-message"></p>
+        <button class="btn-primary" style="display: inline-block;" onclick="restartQuiz()">Refazer Quiz</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            question: "1. Qual era a principal atividade econômica do Haiti durante a colonização francesa?",
+            options: [
+                "A) Produção de ouro e petróleo.",
+                "B) Produção de açúcar e café.",
+                "C) Criação de animais.",
+                "D) Produção de tecidos."
+            ],
+            correct: 1,
+            explanation: "A colônia francesa era uma das mais lucrativas do mundo graças às grandes plantações de açúcar e café baseadas no trabalho escravizado."
+        },
+        {
+            question: "2. Qual foi a influência da Revolução Francesa na Revolução Haitiana?",
+            options: [
+                "A) Incentivou a volta da escravidão.",
+                "B) Defendeu a colonização francesa.",
+                "C) Divulgou ideias de liberdade, igualdade e fraternidade.",
+                "D) Impediu a independência do Haiti."
+            ],
+            correct: 2,
+            explanation: "Os ideais iluministas e revolucionários franceses inspiraram os escravizados e libertos a lutarem pelo fim da escravidão e do domínio colonial."
+        },
+        {
+            question: "3. Quem foi Toussaint Louverture?",
+            options: [
+                "A) Um imperador francês.",
+                "B) Um dos principais líderes da Revolução Haitiana.",
+                "C) Um colonizador português.",
+                "D) Um comerciante de escravizados."
+            ],
+            correct: 1,
+            explanation: "Toussaint Louverture foi um ex-escravizado e brilhante estrategista militar que liderou as forças revolucionárias contra potências europeias."
+        },
+        {
+            question: "4. Em que ano o Haiti conquistou sua independência?",
+            options: [
+                "A) 1789.",
+                "B) 1791.",
+                "C) 1802.",
+                "D) 1804."
+            ],
+            correct: 3,
+            explanation: "Em 1º de janeiro de 1804, o Haiti tornou-se a primeira república negra livre do mundo e o segundo país independente das Américas."
+        },
+        {
+            question: "5. Qual era a principal função dos quilombos no Brasil?",
+            options: [
+                "A) Apoiar a escravidão.",
+                "B) Servir como centros comerciais portugueses.",
+                "C) Representar espaços de resistência, liberdade e proteção.",
+                "D) Fortalecer o domínio dos colonizadores."
+            ],
+            correct: 2,
+            explanation: "Os quilombos eram comunidades autônomas de resistência formadas por africanos escravizados fugidos, indígenas e marginalizados."
+        },
+        {
+            question: "6. Como era chamada a colônia que hoje conhecemos como Haiti?",
+            options: [
+                "A) Nova França.",
+                "B) São Domingos.",
+                "C) Porto Rico.",
+                "D) Nova Espanha."
+            ],
+            correct: 1,
+            explanation: "Antes da independência, o território chamava-se Saint-Domingue (São Domingos). Após 1804, adotou o nome indígena 'Haiti' (terra montanhosa)."
+        },
+        {
+            question: "7. Quem foi o líder associado ao início da revolta dos escravizados em 1791?",
+            options: [
+                "A) Napoleão Bonaparte.",
+                "B) Jean-Jacques Dessalines.",
+                "C) Dutty Boukman.",
+                "D) Toussaint Louverture."
+            ],
+            correct: 2,
+            explanation: "Dutty Boukman conduziu a cerimônia de Bois-Caïman em agosto de 1791, estopim para o grande levante dos escravizados."
+        },
+        {
+            question: "8. Por que Napoleão Bonaparte enviou tropas ao Haiti em 1802?",
+            options: [
+                "A) Para apoiar a independência.",
+                "B) Para recuperar o controle da colônia e restabelecer a escravidão.",
+                "C) Para acabar com o domínio francês.",
+                "D) Para ajudar os quilombolas."
+            ],
+            correct: 1,
+            explanation: "Napoleão desejava restaurar a lucrativa economia açucareira da colônia e reverter a abolição da escravidão."
+        },
+        {
+            question: "9. Qual foi a importância da Batalha de Vertières, em 1803?",
+            options: [
+                "A) Marcou a vitória dos revolucionários sobre os franceses.",
+                "B) Iniciou a colonização do Haiti.",
+                "C) Deu início à Revolução Francesa.",
+                "D) Fortaleceu o domínio de Napoleão."
+            ],
+            correct: 0,
+            explanation: "A Batalha de Vertières (novembro de 1803) foi a vitória militar decisiva do exército haitiano liderado por Dessalines contra as tropas de Napoleão."
+        },
+        {
+            question: "10. Qual quilombo brasileiro se tornou um dos maiores símbolos de resistência à escravidão?",
+            options: [
+                "A) Quilombo de Canudos.",
+                "B) Quilombo dos Palmares.",
+                "C) Quilombo de São Domingos.",
+                "D) Quilombo da França."
+            ],
+            correct: 1,
+            explanation: "Localizado na Serra da Barriga (atual Alagoas), o Quilombo dos Palmares resistiu por quase um século e teve Zumbi como seu líder mais célebre."
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionText = document.getElementById("question-text");
+    const optionsList = document.getElementById("options-list");
+    const feedbackBox = document.getElementById("feedback-box");
+    const nextBtn = document.getElementById("next-btn");
+    const questionCounter = document.getElementById("question-counter");
+    const scoreTracker = document.getElementById("score-tracker");
+    const progressBar = document.getElementById("progress-bar");
+
+    function loadQuestion() {
+        const q = quizData[currentQuestion];
+        questionText.textContent = q.question;
+        questionCounter.textContent = `Questão ${currentQuestion + 1} de ${quizData.length}`;
+        progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+
+        optionsList.innerHTML = "";
+        feedbackBox.style.display = "none";
+        nextBtn.style.display = "none";
+
+        q.options.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.className = "option-btn";
+            button.textContent = option;
+            button.onclick = () => selectAnswer(index, button);
+            optionsList.appendChild(button);
+        });
+    }
+
+    function selectAnswer(selectedIndex, selectedBtn) {
+        const q = quizData[currentQuestion];
+        const allButtons = optionsList.querySelectorAll(".option-btn");
+
+        allButtons.forEach(btn => btn.disabled = true);
+
+        if (selectedIndex === q.correct) {
+            selectedBtn.classList.add("correct");
+            score++;
+            scoreTracker.textContent = `Pontos: ${score}`;
+            feedbackBox.innerHTML = `<strong>Correto!</strong> ${q.explanation}`;
+        } else {
+            selectedBtn.classList.add("wrong");
+            allButtons[q.correct].classList.add("correct");
+            feedbackBox.innerHTML = `<strong>Incorreto.</strong> ${q.explanation}`;
+        }
+
+        feedbackBox.style.display = "block";
+        nextBtn.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quizData.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById("quiz-screen").style.display = "none";
+        const resultScreen = document.getElementById("result-screen");
+        resultScreen.style.display = "block";
+
+        document.getElementById("final-score").textContent = `${score}/${quizData.length}`;
+
+        const msg = document.getElementById("result-message");
+        if (score === 10) {
+            msg.textContent = "Excelente! Você domina completamente a história da Revolução Haitiana e dos Quilombos.";
+        } else if (score >= 7) {
+            msg.textContent = "Muito bem! Você tem um ótimo conhecimento sobre os movimentos de resistência nas Américas.";
+        } else {
+            msg.textContent = "Bom esforço! Que tal revisar os comentários e tentar novamente para alcançar a pontuação máxima?";
+        }
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        score = 0;
+        scoreTracker.textContent = "Pontos: 0";
+        document.getElementById("result-screen").style.display = "none";
+        document.getElementById("quiz-screen").style.display = "block";
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
